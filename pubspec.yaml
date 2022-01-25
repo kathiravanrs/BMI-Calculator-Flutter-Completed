@@ -1,4 +1,4 @@
-name: bmi_calculator
+name: QuakeFinder
 description: A new Flutter application.
 
 version: 1.0.0+1
@@ -10,12 +10,21 @@ dependencies:
   flutter:
     sdk: flutter
 
+  sms: ^0.2.0
+  fluttertoast: ^7.0.2
+  permission_handler: ^5.0.1+1
+
+
+
   cupertino_icons: ^0.1.2
   font_awesome_flutter: ^8.4.0
+  http: any
+  intl: any
 
 dev_dependencies:
   flutter_test:
     sdk: flutter
+
 
 flutter:
   uses-material-design: true

@@ -1,17 +1,11 @@
+import 'package:QuakeFinder/components/bottom_button.dart';
+import 'package:QuakeFinder/components/icon_content.dart';
+import 'package:QuakeFinder/components/reusable_card.dart';
+import 'package:QuakeFinder/components/round_icon_button.dart';
+import 'package:QuakeFinder/constants.dart';
+import 'package:QuakeFinder/earthquake_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:font_awesome_flutter/font_awesome_flutter.dart';
-import 'package:bmi_calculator/components/icon_content.dart';
-import 'package:bmi_calculator/components/reusable_card.dart';
-import 'package:bmi_calculator/constants.dart';
-import 'package:bmi_calculator/screens/results_page.dart';
-import 'package:bmi_calculator/components/bottom_button.dart';
-import 'package:bmi_calculator/components/round_icon_button.dart';
-import 'package:bmi_calculator/calculator_brain.dart';
-
-enum Gender {
-  male,
-  female,
-}
 
 class InputPage extends StatefulWidget {
   @override
@@ -19,16 +13,15 @@ class InputPage extends StatefulWidget {
 }
 
 class _InputPageState extends State<InputPage> {
-  Gender selectedGender;
-  int height = 180;
-  int weight = 60;
-  int age = 20;
+  String selectedSort = "time";
+  int magnitude = 5;
+  int displayNumber = 10;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-        title: Text('BMI CALCULATOR'),
+        title: Text('QuakeFinder'),
       ),
       body: Column(
         crossAxisAlignment: CrossAxisAlignment.stretch,
@@ -40,15 +33,15 @@ class _InputPageState extends State<InputPage> {
                 child: ReusableCard(
                   onPress: () {
                     setState(() {
-                      selectedGender = Gender.male;
+                      selectedSort = "time";
                     });
                   },
-                  colour: selectedGender == Gender.male
+                  colour: selectedSort == "time"
                       ? kActiveCardColour
                       : kInactiveCardColour,
                   cardChild: IconContent(
-                    icon: FontAwesomeIcons.mars,
-                    label: 'MALE',
+                    icon: FontAwesomeIcons.clock,
+                    label: 'Order by Time',
                   ),
                 ),
               ),
@@ -56,15 +49,15 @@ class _InputPageState extends State<InputPage> {
                 child: ReusableCard(
                   onPress: () {
                     setState(() {
-                      selectedGender = Gender.female;
+                      selectedSort = "magnitude";
                     });
                   },
-                  colour: selectedGender == Gender.female
+                  colour: selectedSort == "magnitude"
                       ? kActiveCardColour
                       : kInactiveCardColour,
                   cardChild: IconContent(
-                    icon: FontAwesomeIcons.venus,
-                    label: 'FEMALE',
+                    icon: FontAwesomeIcons.exclamationTriangle,
+                    label: 'Order by Magnitude',
                   ),
                 ),
               ),
@@ -77,8 +70,11 @@ class _InputPageState extends State<InputPage> {
                 mainAxisAlignment: MainAxisAlignment.center,
                 children: <Widget>[
                   Text(
-                    'HEIGHT',
+                    'Minimum Magnitude to display',
                     style: kLabelTextStyle,
+                  ),
+                  SizedBox(
+                    height: 10.0,
                   ),
                   Row(
                     mainAxisAlignment: MainAxisAlignment.center,
@@ -86,13 +82,9 @@ class _InputPageState extends State<InputPage> {
                     textBaseline: TextBaseline.alphabetic,
                     children: <Widget>[
                       Text(
-                        height.toString(),
+                        magnitude.toString(),
                         style: kNumberTextStyle,
                       ),
-                      Text(
-                        'cm',
-                        style: kLabelTextStyle,
-                      )
                     ],
                   ),
                   SliderTheme(
@@ -107,12 +99,12 @@ class _InputPageState extends State<InputPage> {
                           RoundSliderOverlayShape(overlayRadius: 30.0),
                     ),
                     child: Slider(
-                      value: height.toDouble(),
-                      min: 120.0,
-                      max: 220.0,
+                      value: magnitude.toDouble(),
+                      min: 1.0,
+                      max: 10.0,
                       onChanged: (double newValue) {
                         setState(() {
-                          height = newValue.round();
+                          magnitude = newValue.round();
                         });
                       },
                     ),
@@ -131,11 +123,14 @@ class _InputPageState extends State<InputPage> {
                       mainAxisAlignment: MainAxisAlignment.center,
                       children: <Widget>[
                         Text(
-                          'WEIGHT',
+                          'Number of items to display',
                           style: kLabelTextStyle,
                         ),
+                        SizedBox(
+                          height: 10.0,
+                        ),
                         Text(
-                          weight.toString(),
+                          displayNumber.toString(),
                           style: kNumberTextStyle,
                         ),
                         Row(
@@ -145,17 +140,17 @@ class _InputPageState extends State<InputPage> {
                                 icon: FontAwesomeIcons.minus,
                                 onPressed: () {
                                   setState(() {
-                                    weight--;
+                                    displayNumber--;
                                   });
                                 }),
                             SizedBox(
-                              width: 10.0,
+                              width: 50.0,
                             ),
                             RoundIconButton(
                               icon: FontAwesomeIcons.plus,
                               onPressed: () {
                                 setState(() {
-                                  weight++;
+                                  displayNumber++;
                                 });
                               },
                             ),
@@ -165,66 +160,23 @@ class _InputPageState extends State<InputPage> {
                     ),
                   ),
                 ),
-                Expanded(
-                  child: ReusableCard(
-                    colour: kActiveCardColour,
-                    cardChild: Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: <Widget>[
-                        Text(
-                          'AGE',
-                          style: kLabelTextStyle,
-                        ),
-                        Text(
-                          age.toString(),
-                          style: kNumberTextStyle,
-                        ),
-                        Row(
-                          mainAxisAlignment: MainAxisAlignment.center,
-                          children: <Widget>[
-                            RoundIconButton(
-                              icon: FontAwesomeIcons.minus,
-                              onPressed: () {
-                                setState(
-                                  () {
-                                    age--;
-                                  },
-                                );
-                              },
-                            ),
-                            SizedBox(
-                              width: 10.0,
-                            ),
-                            RoundIconButton(
-                                icon: FontAwesomeIcons.plus,
-                                onPressed: () {
-                                  setState(() {
-                                    age++;
-                                  });
-                                })
-                          ],
-                        )
-                      ],
-                    ),
-                  ),
-                ),
               ],
             ),
           ),
+          SizedBox(
+            height: 10.0,
+          ),
           BottomButton(
-            buttonTitle: 'CALCULATE',
+            buttonTitle: 'Search',
             onTap: () {
-              CalculatorBrain calc =
-                  CalculatorBrain(height: height, weight: weight);
-
               Navigator.push(
                 context,
                 MaterialPageRoute(
-                  builder: (context) => ResultsPage(
-                        bmiResult: calc.calculateBMI(),
-                        resultText: calc.getResult(),
-                        interpretation: calc.getInterpretation(),
-                      ),
+                  builder: (context) => EarthquakeScreen(
+                    orderBy: selectedSort,
+                    minMag: magnitude,
+                    limit: displayNumber,
+                  ),
                 ),
               );
             },
